@@ -1,6 +1,10 @@
 # cognito-backup-restore
 [![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors)
 
+### Note
+This is a fork of [jstarmx/cognito-backup-restore](https://github.com/jstarmx/cognito-backup-restore), which (for now) only exists in order to publish to NPM.
+
+---
 AIO Tool for backing up and restoring AWS Cognito User Pools
 
 Amazon Cognito is awesome, but has its own set of limitations. Currently there is no backup option provided in case we need to take backup of users (to move to another service) or restore them to new Userpool.

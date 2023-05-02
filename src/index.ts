@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as AWS from 'aws-sdk';
 import Bottleneck from 'bottleneck';
 import * as delay from "delay";
+require('aws-sdk/lib/maintenance_mode_message').suppress = true;
 
 const JSONStream = require('JSONStream');
 
