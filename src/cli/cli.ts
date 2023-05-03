@@ -4,6 +4,7 @@ import * as AWS from 'aws-sdk';
 import * as ora from 'ora';
 
 import chalk from 'chalk';
+import { fromSSO } from "@aws-sdk/credential-provider-sso";
 import { backupUsers, restoreUsers } from '../index';
 import { options } from './options';
 
@@ -14,13 +15,16 @@ const orange = chalk.keyword('orange');
 (async () => {
     let spinner = ora({ spinner: 'dots4', hideCursor: true });
     try {
-        const { mode, profile, region, key, secret, userpool, directory, file, password, passwordModulePath, delay, metadata, env, groups } = await options;
-
+        const { mode, profile, region, key, secret, userpool, directory, file, password, passwordModulePath, delay, metadata, env, groups, awsUseSSO } = await options;
         // update the config of aws-sdk based on profile/credentials passed
         AWS.config.update({ region });
 
         if (profile) {
-            AWS.config.credentials = new AWS.SharedIniFileCredentials({ profile });
+            if (awsUseSSO) {
+                AWS.config.credentials = await fromSSO({ profile })();
+            } else {
+                AWS.config.credentials = new AWS.SharedIniFileCredentials({ profile });
+            }
         } else if (key && secret) {
             AWS.config.credentials = new AWS.Credentials({
                 accessKeyId: key, secretAccessKey: secret
@@ -47,6 +51,7 @@ const orange = chalk.keyword('orange');
         }
     } catch (error) {
         spinner.fail(red(error.message));
+        console.error(error);
         process.exit(1);
     }
 })();

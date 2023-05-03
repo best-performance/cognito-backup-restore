@@ -71,7 +71,7 @@ export const backupUsers = async (cognito: CognitoISP, UserPoolId: string, direc
 
                 if (PaginationToken) {
                     params.PaginationToken = PaginationToken;
-                    if(delayDurationInMillis > 0) {
+                    if (delayDurationInMillis > 0) {
                         await delay(delayDurationInMillis);
                     }
                     await paginationCalls();
@@ -116,7 +116,6 @@ export const restoreUsers = async (cognito: CognitoISP, UserPoolId: string, file
                     Username: user.Username,
                     UserAttributes: attributes
                 };
-
                 // Set Username as email if UsernameAttributes of UserPool contains email
                 if (UsernameAttributes.includes('email')) {
                     params.Username = pluckValue(user.Attributes, 'email') as string;
@@ -125,13 +124,12 @@ export const restoreUsers = async (cognito: CognitoISP, UserPoolId: string, file
                     params.Username = pluckValue(user.Attributes, 'phone_number') as string;
                     params.DesiredDeliveryMediums = ['EMAIL', 'SMS']
                 }
-
                 // If password module is specified, use it silently
                 // if not provided or it throws, we fallback to password if provided
                 // if password is provided, use it silently
                 // else set a cognito generated one and send email (default)
                 let specificPwdExistsForUser = false;
-                if (pwdModule !== null){
+                if (pwdModule !== null) {
                     try {
                         params.MessageAction = 'SUPPRESS';
                         params.TemporaryPassword = pwdModule.getPwdForUsername(user.Username);
@@ -149,10 +147,11 @@ export const restoreUsers = async (cognito: CognitoISP, UserPoolId: string, file
                     await cognito.adminCreateUser(params).promise();
 
                     if (groups && Array.isArray(user.Groups)) {
+                        const updatedUsername = params.Username || user.Username;
                         for (const group of user.Groups) {
                             const params: AdminAddUserToGroupRequest = {
                                 UserPoolId,
-                                Username: user.Username,
+                                Username: updatedUsername,
                                 GroupName: group.GroupName,
                             };
 

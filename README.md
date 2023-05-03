@@ -2,7 +2,13 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors)
 
 ### Note
-This is a fork of [jstarmx/cognito-backup-restore](https://github.com/jstarmx/cognito-backup-restore), which (for now) only exists in order to publish to NPM.
+This is a fork of [jstarmx/cognito-backup-restore](https://github.com/jstarmx/cognito-backup-restore), which is itself a fork of [rahulpsd18/cognito-backup-restore](https://github.com/rahulpsd18/cognito-backup-restore).
+
+Changes (so far) are:
+* suppress the AWS SDK "maintenance mode" message
+* added a `aws-use-sso` option to use AWS SSO profiles (v1.5.0)
+* rename/republish as @elastik/cognito-backup-restore
+* minor changes to dependencies to allow compilation and publishing to npm
 
 ---
 AIO Tool for backing up and restoring AWS Cognito User Pools
@@ -41,11 +47,11 @@ import {backupUsers, restoreUsers} from 'cognito-backup-restore';
 const cognitoISP = new AWS.CognitoIdentityServiceProvider();
 
 // you may use async-await too
-backupUsers(cognitoISP, <USERPOOL-ID>, <directory>)
+backupUsers(cognitoISP, <USERPOOL-ID>, <directory>, <delayDurationMillis?>,<includeGroupsBoolean?>)
   .then(() => console.log(`Backup completed`))
   .catch(console.error)
 
-restoreUsers(cognitoISP, <USERPOOL-ID>, <JSON-File>, <Password?>)
+restoreUsers(cognitoISP, <USERPOOL-ID>, <JSON-File>, <Password?>, <PasswordModulePath?>, <IncludeGroupsBoolean?> )
   .then(() => console.log(`Restore completed`))
   .catch(console.error)
 ```
@@ -67,6 +73,8 @@ cbr <command> [options]
 > `--userpool` `--pool`: The Cognito pool to use. Possible value of `all` is allowed in case of backup.
 >
 > `--profile` `-p`: Use a specific profile from the credential file. Key and Secret can be passed instead (see below).
+>
+> `--aws-use-sso` `-o`: Use AWS SSO together with the named profile passed in `--profile`
 >
 > `--aws-access-key` `--key`: The AWS Access Key to use. Not to be passed when using `--profile`.
 >

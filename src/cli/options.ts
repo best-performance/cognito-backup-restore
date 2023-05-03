@@ -1,6 +1,7 @@
 import * as AWS from 'aws-sdk';
 import * as fuzzy from 'fuzzy';
 import * as inquirer from 'inquirer';
+import { fromSSO } from "@aws-sdk/credential-provider-sso";
 import chalk from 'chalk';
 import { argv } from './args';
 
@@ -32,7 +33,7 @@ const searchCognitoRegion = async (_: never, input: string) => {
 };
 
 const verifyOptions = async () => {
-    let { mode, profile, region, key, secret, userpool, directory, file, password, passwordModulePath, delay, metadata, env, groups } = argv;
+    let { mode, profile, region, key, secret, userpool, directory, file, password, passwordModulePath, delay, metadata, env, groups, awsUseSSO } = argv;
 
     // choose the mode if not passed through CLI or invalid is passed
     if (!mode || !['restore', 'backup'].includes(mode)) {
@@ -51,7 +52,9 @@ const verifyOptions = async () => {
         let savedAWSProfiles: string[] = [];
 
         try { // to read from saved config
-            const credentials = new AWS.IniLoader().loadFrom({});
+            const credentials = new AWS.IniLoader().loadFrom({
+                isConfig: !!awsUseSSO, // if awsUseSSO is true, then read profiles from ~/.aws/config instead of ~/.aws/credentials
+            });
             savedAWSProfiles = Object.keys(credentials);
         } catch (err) {
             // couldn't find saved config
@@ -95,7 +98,11 @@ const verifyOptions = async () => {
         AWS.config.update({ region });
 
         if (profile) {
-            AWS.config.credentials = new AWS.SharedIniFileCredentials({ profile });
+            if (awsUseSSO) {
+                AWS.config.credentials = await fromSSO({ profile })();
+            } else {
+                AWS.config.credentials = new AWS.SharedIniFileCredentials({ profile });
+            }
         } else if (key && secret) {
             AWS.config.credentials = new AWS.Credentials({
                 accessKeyId: key, secretAccessKey: secret
@@ -173,7 +180,7 @@ const verifyOptions = async () => {
             throw Error(`Cannot load password module path "${passwordModulePath}".`);
         }
     }
-    return { mode, profile, region, key, secret, userpool, directory, file, password, passwordModulePath, delay, metadata, env, groups }
+    return { mode, profile, region, key, secret, userpool, directory, file, password, passwordModulePath, delay, metadata, env, groups, awsUseSSO }
 };
 
 

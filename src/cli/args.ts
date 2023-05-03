@@ -46,7 +46,7 @@ export const argv = yargs
             },
             passwordModulePath: {
                 alias: ["pwdModule"],
-                describe: dimmed`A module that exports an interface getPwdForUsername(username: String) method, fall back to password parameter if throw`,
+                describe: dimmed`A module that exports an interface getPwdForUsername(username: String) method, falls back to password parameter if thrown`,
                 string: true
             }
         });
@@ -69,6 +69,12 @@ export const argv = yargs
         describe: dimmed`Use a specific profile from your credential file`,
         conflicts: ['aws-access-key', 'aws-secret-key'],
         string: true,
+    })
+    .option('aws-use-sso', {
+        alias: ['o', 'awsUseSSO'],
+        describe: dimmed`Use AWS SSO credentials together with the named AWS profile`,
+        conflicts: ['aws-access-key', 'aws-secret-key'],
+        type: 'boolean'
     })
     .option('aws-access-key', {
         alias: ['key', 'k'],
@@ -106,7 +112,6 @@ export const argv = yargs
         describe: dimmed`Include the groups that a user is included in.`,
         type: 'boolean'
     })
-
     // help
     .help('help', dimmed`Show help`)
     .alias('help', 'h')
