@@ -26,15 +26,15 @@ Requires node 6.10 or newer
 
 ## Installation
 
-`cognito-backup-restore` is available as a package on [npm](https://www.npmjs.com/package/cognito-backup-restore).
+`@elastik/cognito-backup-restore` is available as a package on [npm](https://www.npmjs.com/package/@elastik/cognito-backup-restore).
 
 ```shell
-npm install -g cognito-backup-restore
+npm install -g @elastik/cognito-backup-restore
 ```
 
 ## Usage
 
-`cognito-backup-restore` can be used by importing it directly or via [CLI](#cli) (recommended).
+`@elastik/cognito-backup-restore` can be used by importing it directly or via [CLI](#cli) (recommended).
 
 ### Imports
 
@@ -42,7 +42,7 @@ Make sure you have installed it locally `npm install --save cognito-backup-resto
 
 ```typescript
 import * as AWS from 'aws-sdk';
-import {backupUsers, restoreUsers} from 'cognito-backup-restore';
+import {backupUsers, restoreUsers} from '@elastik/cognito-backup-restore';
 
 const cognitoISP = new AWS.CognitoIdentityServiceProvider();
 
